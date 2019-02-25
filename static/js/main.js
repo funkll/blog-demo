@@ -140,6 +140,11 @@ const bindDelete = (self) => {
     blogCell.remove()
 }
 
+const bindAddComment = () => {
+
+}
+
+
 const bindDeligates = () => {
     const blogsContainer = e('.blogs')
     blogsContainer.addEventListener('click', function () {
@@ -147,6 +152,8 @@ const bindDeligates = () => {
         var has = self.classList.contains.bind(self.classList)
         if (has('blog-delete')) {
             bindDelete(self)
+        } else if (has('comment-add')) {
+            bindAddComment(self)
         }
     })
 }
