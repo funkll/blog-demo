@@ -123,7 +123,6 @@ const apiCommentAll = (callback) => {
     ajax(request)
 }
 
-
 const blogAll = () => {
     apiBlogAll(function (response) {
         var blogs = JSON.parse(response)
