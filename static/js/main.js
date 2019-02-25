@@ -1,6 +1,6 @@
-var log = console.log.bind(console)
+const log = console.log.bind(console)
 
-var ajax = function(request) {
+const ajax = function(request) {
     var r = new XMLHttpRequest()
     r.open(request.method, request.url, true)
     if (request.contentType != undefined) {
@@ -18,7 +18,7 @@ var ajax = function(request) {
     }
 }
 
-var e = function(selector) {
+const e = (selector) => {
     var element = document.querySelector(selector)
     if (element == null) {
         var s = `${selector} not exist`
@@ -26,38 +26,6 @@ var e = function(selector) {
     } else {
         return element
     }
-}
-
-var apiBindDelete = (data, callback) => {
-    var request = {
-        method: 'POST',
-        url: '/api/blog/delete',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-var apiBlogNew = (data, callback) => {
-    var request = {
-        method: 'POST',
-        url: '/api/blog/add',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-const apiBlogAll = (callback) => {
-    var request = {
-        method: 'GET',
-        url: '/api/blog/all',
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
 }
 
 const templateBlog = (blog) => {
@@ -80,8 +48,8 @@ const templateBlog = (blog) => {
             <div class="blog-comments">
                 <div class="new-comment">
                     <input class="comment-blog-id" type=hidden value="${id}">
-                    <input class="comment-author" value="">
-                    <input class="comment-content" value="">
+                    <input class="comment-author" placeholder="Author" value="" required>
+                    <input class="comment-content" placeholder="Content" value="">
                     <button class="comment-add">添加评论</button>
                 </div>
             </div>
@@ -89,7 +57,8 @@ const templateBlog = (blog) => {
     `
     return t
 }
-var insertBlogAll = function(blogs) {
+
+const insertBlogAll = (blogs) => {
     var html = ''
     for (var i = 0; i < blogs.length; i++) {
         var b = blogs[i]
@@ -101,12 +70,74 @@ var insertBlogAll = function(blogs) {
     div.innerHTML = html
 }
 
+const apiBindDelete = (data, callback) => {
+    const request = {
+        method: 'POST',
+        url: '/api/blog/delete',
+        data: data,
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const apiBlogNew = (data, callback) => {
+    const request = {
+        method: 'POST',
+        url: '/api/blog/add',
+        data: data,
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const apiBlogAll = (callback) => {
+    var request = {
+        method: 'GET',
+        url: '/api/blog/all',
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const apiAddComment = (data, callback) => {
+    const request = {
+        method: 'POST',
+        url: '/api/comment/add',
+        contentType: 'application/json',
+        data: data,
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const apiCommentAll = (callback) => {
+    var request = {
+        method: 'GET',
+        url: '/api/comment/all',
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+
 const blogAll = () => {
     apiBlogAll(function (response) {
         var blogs = JSON.parse(response)
         insertBlogAll(blogs)
     })
 }
+
+const commentAll = () => {
+    apiCommentAll(function (response) {
+        var comments = JSON.parse(response)
+        log('comments', comments)
+    })
+}
+
 const actionAdd = () => {
     var form = {
         title: e('#id-input-title').value,
@@ -116,7 +147,6 @@ const actionAdd = () => {
     var data = JSON.stringify(form)
     apiBlogNew (data, function (response) {
         // 不考虑错误情况（断网、服务器返回错误等等）
-        console.log('响应', response)
         var res = JSON.parse(response)
         var t = templateBlog(res)
         e('.blogs').insertAdjacentHTML('beforeend', t)
@@ -136,9 +166,21 @@ const actionDelete = (self) => {
 }
 
 const actionAddComment = (self) => {
-
+    var f = self.closest('.new-comment')
+    var blogId = f.querySelector('.comment-blog-id').value
+    var author = f.querySelector('.comment-author').value
+    var content = f.querySelector('.comment-content').value
+    var form = {
+        blog_id: blogId,
+        author: author,
+        content: content,
+    }
+    var data = JSON.stringify(form)
+    apiAddComment(data, function(response) {
+        var comment = JSON.parse(response)
+        log('新评论', comment)
+    })
 }
-
 
 const bindDeligates = () => {
     e('#id-button-submit').addEventListener('click', function () {
@@ -154,15 +196,12 @@ const bindDeligates = () => {
             actionAddComment(self)
         }
     })
-
-}
-var bindEvents = () => {
-    bindDeligates()
 }
 
 var __main = () => {
+    bindDeligates()
     blogAll()
-    bindEvents()
+    commentAll()
 }
 
 __main()

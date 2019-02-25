@@ -19,6 +19,9 @@ registerRoutes(app, routeIndex.routes)
 const routeBlog = require('./route/blog')
 registerRoutes(app, routeBlog.routes)
 
+const routeComment = require('./route/comment')
+registerRoutes(app, routeComment.routes)
+
 var server = app.listen(8000, () => {
     var host = server.address().address
     var port = server.address().port
