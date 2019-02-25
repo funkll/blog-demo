@@ -109,7 +109,7 @@ var insertBlogAll = function(blogs) {
         var t = templateBlog(b)
         html += t
     }
-    // 把数据写入 .gua-blogs 中，直接用覆盖式写入
+    // 把数据写入 .blogs 中，直接用覆盖式写入
     var div = document.querySelector('.blogs')
     div.innerHTML = html
 }
