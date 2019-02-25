@@ -35,6 +35,20 @@ b.new = function(form) {
     return m
 }
 
+b.delete = function(id) {
+    var blogs = this.data
+    var found = false
+    for (var i = 0; i < blogs.length; i++) {
+        var blog = blogs[i]
+        if (blog.id == id) {
+            found = true
+            break
+        }
+    }
+    blogs.splice(i, 1)
+    return found
+}
+
 b.all = function () {
     var blogs = this.data
     return blogs

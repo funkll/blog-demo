@@ -35,11 +35,12 @@ const templateBlog = (blog) => {
     var d = new Date(blog.created_time * 1000)
     var time = d.toLocaleString()
     var t = `
-        <div class="gua-blog-cell">
+        <div class="blog-cell" data-id="${id}" >
             <div class="">
-                <a class="blog-title" href="/blog/${id}" data-id="${id}">
+                <a class="blog-title" href="/blog/${id}" >
                     ${title}
                 </a>
+                <button class="blog-delete">删除文章</button>
             </div>
             <div class="">
                 <span>${author}</span> @ <time>${time}</time>
@@ -57,6 +58,36 @@ const templateBlog = (blog) => {
     return t
 }
 
+var apiBindDelete = (data, callback) => {
+    var request = {
+        method: 'POST',
+        url: '/api/blog/delete',
+        data: data,
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const bindDelete = () => {
+    const blogsContainer = e('.blogs')
+    blogsContainer.addEventListener('click', function () {
+        var self = event.target
+        var has = self.classList.contains.bind(self.classList)
+        if (has('blog-delete')) {
+            const blogCell = self.closest('.blog-cell')
+            var form = {
+                id: blogCell.dataset.id,
+            }
+            var data = JSON.stringify(form)
+            apiBindDelete(data, function (response) {
+                // log('result', response)
+            })
+            blogCell.remove()
+        }
+    })
+}
+
 var apiBlogNew = (data, callback) => {
     var request = {
         method: 'POST',
@@ -68,7 +99,7 @@ var apiBlogNew = (data, callback) => {
     ajax(request)
 }
 
-var bindAdd = () => {
+const bindAdd = () => {
     e('#id-button-submit').addEventListener('click', function () {
         var form = {
             title: e('#id-input-title').value,
@@ -85,6 +116,7 @@ var bindAdd = () => {
         })
     })
 }
+
 const apiBlogAll = (callback) => {
     var request = {
         method: 'GET',
@@ -116,6 +148,7 @@ var insertBlogAll = function(blogs) {
 
 var bindEvents = () => {
     bindAdd()
+    bindDelete()
 }
 
 var __main = () => {
