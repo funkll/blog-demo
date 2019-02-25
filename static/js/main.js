@@ -69,24 +69,7 @@ var apiBindDelete = (data, callback) => {
     ajax(request)
 }
 
-const bindDelete = () => {
-    const blogsContainer = e('.blogs')
-    blogsContainer.addEventListener('click', function () {
-        var self = event.target
-        var has = self.classList.contains.bind(self.classList)
-        if (has('blog-delete')) {
-            const blogCell = self.closest('.blog-cell')
-            var form = {
-                id: blogCell.dataset.id,
-            }
-            var data = JSON.stringify(form)
-            apiBindDelete(data, function (response) {
-                // log('result', response)
-            })
-            blogCell.remove()
-        }
-    })
-}
+
 
 var apiBlogNew = (data, callback) => {
     var request = {
@@ -145,10 +128,31 @@ var insertBlogAll = function(blogs) {
     var div = document.querySelector('.blogs')
     div.innerHTML = html
 }
+const bindDelete = (self) => {
+    const blogCell = self.closest('.blog-cell')
+    var form = {
+        id: blogCell.dataset.id,
+    }
+    var data = JSON.stringify(form)
+    apiBindDelete(data, function (response) {
+        log('result', response)
+    })
+    blogCell.remove()
+}
 
+const bindDeligates = () => {
+    const blogsContainer = e('.blogs')
+    blogsContainer.addEventListener('click', function () {
+        var self = event.target
+        var has = self.classList.contains.bind(self.classList)
+        if (has('blog-delete')) {
+            bindDelete(self)
+        }
+    })
+}
 var bindEvents = () => {
     bindAdd()
-    bindDelete()
+    bindDeligates()
 }
 
 var __main = () => {
