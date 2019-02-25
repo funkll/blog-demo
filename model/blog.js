@@ -51,6 +51,19 @@ b.delete = function(id) {
 
 b.all = function () {
     var blogs = this.data
+    var comment = require('./comment')
+    var comments = comment.all()
+    for (var i = 0; i < blogs.length; i++) {
+        var blog = blogs[i]
+        var cs = []
+        for (var j = 0; j < comments.length; j++) {
+            var c = comments[j]
+            if (blog.id == c.blog_id) {
+                cs.push(c)
+            }
+        }
+        blog.comments = cs
+    }
     return blogs
 }
 
@@ -70,16 +83,17 @@ b.get = function(id) {
     for (var i = 0; i < blogs.length; i++) {
         var blog = blogs[i]
         if (blog.id == id) {
-            // var comment = require('./comment')
-            // var comments = comment.all()
-            // var cs = []
-            // for (var j = 0; j < comments.length; j++) {
-            //     var c = comments[j]
-            //     if (blog.id == c.blog_id) {
-            //         cs.push(c)
-            //     }
-            // }
-            // blog.comments = cs
+            var comment = require('./comment')
+            var comments = comment.all()
+            var cs = []
+            for (var j = 0; j < comments.length; j++) {
+                var c = comments[j]
+                if (blog.id == c.blog_id) {
+                    cs.push(c)
+                }
+            }
+            console.log('cs', cs)
+            blog.comments = cs
             return blog
         }
     }

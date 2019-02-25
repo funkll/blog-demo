@@ -5,7 +5,7 @@ const all = {
     method: 'get',
     func: (request, response) => {
         var comments = comment.all()
-        var r = JSON.stringify(comments)
+        var r = JSON.stringify(comments, null, 2)
         response.send(r)
     }
 }

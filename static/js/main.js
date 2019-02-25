@@ -125,7 +125,9 @@ const apiCommentAll = (callback) => {
 
 const blogAll = () => {
     apiBlogAll(function (response) {
+        console.log('响应', response)
         var blogs = JSON.parse(response)
+        window.blogs = blogs
         insertBlogAll(blogs)
     })
 }

@@ -27,7 +27,6 @@ var deleteBlog = {
     method: 'post',
     func: (request, response) => {
         var id = request.body.id
-        console.log('request', id)
         var success = blog.delete(id)
         var result = {
             success: success,
