@@ -28,6 +28,38 @@ var e = function(selector) {
     }
 }
 
+var apiBindDelete = (data, callback) => {
+    var request = {
+        method: 'POST',
+        url: '/api/blog/delete',
+        data: data,
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+var apiBlogNew = (data, callback) => {
+    var request = {
+        method: 'POST',
+        url: '/api/blog/add',
+        data: data,
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const apiBlogAll = (callback) => {
+    var request = {
+        method: 'GET',
+        url: '/api/blog/all',
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
 const templateBlog = (blog) => {
     var id = blog.id
     var title = blog.title
@@ -57,66 +89,6 @@ const templateBlog = (blog) => {
     `
     return t
 }
-
-var apiBindDelete = (data, callback) => {
-    var request = {
-        method: 'POST',
-        url: '/api/blog/delete',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-
-
-var apiBlogNew = (data, callback) => {
-    var request = {
-        method: 'POST',
-        url: '/api/blog/add',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-const bindAdd = () => {
-    e('#id-button-submit').addEventListener('click', function () {
-        var form = {
-            title: e('#id-input-title').value,
-            author: e('#id-input-author').value,
-            content: e('#id-input-content').value,
-        }
-        var data = JSON.stringify(form)
-        apiBlogNew (data, function (response) {
-            // 不考虑错误情况（断网、服务器返回错误等等）
-            console.log('响应', response)
-            var res = JSON.parse(response)
-            var t = templateBlog(res)
-            e('.blogs').insertAdjacentHTML('beforeend', t)
-        })
-    })
-}
-
-const apiBlogAll = (callback) => {
-    var request = {
-        method: 'GET',
-        url: '/api/blog/all',
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-const blogAll = () => {
-    apiBlogAll(function (response) {
-        var blogs = JSON.parse(response)
-        insertBlogAll(blogs)
-    })
-}
-
 var insertBlogAll = function(blogs) {
     var html = ''
     for (var i = 0; i < blogs.length; i++) {
@@ -128,8 +100,32 @@ var insertBlogAll = function(blogs) {
     var div = document.querySelector('.blogs')
     div.innerHTML = html
 }
-const bindDelete = (self) => {
+
+const blogAll = () => {
+    apiBlogAll(function (response) {
+        var blogs = JSON.parse(response)
+        insertBlogAll(blogs)
+    })
+}
+const actionAdd = () => {
+    var form = {
+        title: e('#id-input-title').value,
+        author: e('#id-input-author').value,
+        content: e('#id-input-content').value,
+    }
+    var data = JSON.stringify(form)
+    apiBlogNew (data, function (response) {
+        // 不考虑错误情况（断网、服务器返回错误等等）
+        console.log('响应', response)
+        var res = JSON.parse(response)
+        var t = templateBlog(res)
+        e('.blogs').insertAdjacentHTML('beforeend', t)
+    })
+}
+
+const actionDelete = (self) => {
     const blogCell = self.closest('.blog-cell')
+    blogCell.remove()
     var form = {
         id: blogCell.dataset.id,
     }
@@ -137,28 +133,30 @@ const bindDelete = (self) => {
     apiBindDelete(data, function (response) {
         log('result', response)
     })
-    blogCell.remove()
 }
 
-const bindAddComment = () => {
+const actionAddComment = (self) => {
 
 }
 
 
 const bindDeligates = () => {
+    e('#id-button-submit').addEventListener('click', function () {
+        actionAdd()
+    })
     const blogsContainer = e('.blogs')
     blogsContainer.addEventListener('click', function () {
         var self = event.target
         var has = self.classList.contains.bind(self.classList)
         if (has('blog-delete')) {
-            bindDelete(self)
+            actionDelete(self)
         } else if (has('comment-add')) {
-            bindAddComment(self)
+            actionAddComment(self)
         }
     })
+
 }
 var bindEvents = () => {
-    bindAdd()
     bindDeligates()
 }
 
