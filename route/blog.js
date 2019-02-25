@@ -12,8 +12,19 @@ const add = {
     }
 }
 
+const all = {
+    method: 'get',
+    path: '/api/blog/all',
+    func: (request, response) => {
+        var blogs = blog.all()
+        var r = JSON.stringify(blogs, null, 2)
+        response.send(r)
+    }
+}
+
 var routes = [
-    add
+    add,
+    all,
 ]
 
 module.exports.routes = routes

@@ -57,12 +57,6 @@ const templateBlog = (blog) => {
     return t
 }
 
-
-const insertBlog = (blog) => {
-    var t = templateBlog(blog)
-    e('.blogs').insertAdjacentHTML('beforeend', t)
-}
-
 var apiBlogNew = (data, callback) => {
     var request = {
         method: 'POST',
@@ -74,17 +68,6 @@ var apiBlogNew = (data, callback) => {
     ajax(request)
 }
 
-
-var blogNew = (form) => {
-    var data = JSON.stringify(form)
-    apiBlogNew (data, function (response) {
-        // 不考虑错误情况（断网、服务器返回错误等等）
-        console.log('响应', response)
-        var res = JSON.parse(response)
-        insertBlog(res)
-    })
-}
-
 var bindAdd = () => {
     e('#id-button-submit').addEventListener('click', function () {
         var form = {
@@ -92,8 +75,43 @@ var bindAdd = () => {
             author: e('#id-input-author').value,
             content: e('#id-input-content').value,
         }
-        blogNew(form)
+        var data = JSON.stringify(form)
+        apiBlogNew (data, function (response) {
+            // 不考虑错误情况（断网、服务器返回错误等等）
+            console.log('响应', response)
+            var res = JSON.parse(response)
+            var t = templateBlog(res)
+            e('.blogs').insertAdjacentHTML('beforeend', t)
+        })
     })
+}
+const apiBlogAll = (callback) => {
+    var request = {
+        method: 'GET',
+        url: '/api/blog/all',
+        contentType: 'application/json',
+        callback: callback,
+    }
+    ajax(request)
+}
+
+const blogAll = () => {
+    apiBlogAll(function (response) {
+        var blogs = JSON.parse(response)
+        insertBlogAll(blogs)
+    })
+}
+
+var insertBlogAll = function(blogs) {
+    var html = ''
+    for (var i = 0; i < blogs.length; i++) {
+        var b = blogs[i]
+        var t = templateBlog(b)
+        html += t
+    }
+    // 把数据写入 .gua-blogs 中，直接用覆盖式写入
+    var div = document.querySelector('.blogs')
+    div.innerHTML = html
 }
 
 var bindEvents = () => {
@@ -101,6 +119,7 @@ var bindEvents = () => {
 }
 
 var __main = () => {
+    blogAll()
     bindEvents()
 }
 

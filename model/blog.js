@@ -35,6 +35,11 @@ b.new = function(form) {
     return m
 }
 
+b.all = function () {
+    var blogs = this.data
+    return blogs
+}
+
 b.save = function() {
     var s = JSON.stringify(this.data, null, 2)
     fs.writeFile(blogFilePath, s, (error) => {
