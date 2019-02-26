@@ -1,7 +1,7 @@
 # blog-demo
 node blog system with express, no css yet.
 
-## funtions:
+## Funtions:
 - insert new blog with comments.
 - transfer to blog detail page.
 
