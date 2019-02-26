@@ -10,8 +10,9 @@ node blog system with express, no css yet.
 ```
 yarn install
 ```
-- consle
+- console
 ```
 node app.js
 ```
 - go to http://localhost:8000
+
