@@ -70,61 +70,109 @@ const insertBlogAll = (blogs) => {
     div.innerHTML = html
 }
 
-const apiBindDelete = (data, callback) => {
-    const request = {
-        method: 'POST',
-        url: '/api/blog/delete',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
+class Api {
+    get(path, callback) {
+        var request = {
+            method: 'GET',
+            url: path,
+            contentType: 'application/json',
+            callback: callback,
+        }
+        ajax(request)
     }
-    ajax(request)
+    post(path, data, callback) {
+        var request = {
+            method: 'POST',
+            url: path,
+            contentType: 'application/json',
+            data: data,
+            callback: callback,
+        }
+        ajax(request)
+    }
+    bindDelete(data, callback) {
+        var path = '/api/blog/delete'
+        this.post(path, data, callback)
+    }
+
+    blogNew(data, callback) {
+        var path = '/api/blog/add'
+        this.post(path, data, callback)
+    }
+
+    blogAll(callback) {
+        var path = '/api/blog/all'
+        this.get(path, callback)
+    }
+
+    addComment(data, callback) {
+        var path = '/api/comment/add'
+        this.get(path, data, callback)
+    }
+
+    commentAll = (callback) => {
+        var path = '/api/comment/all'
+        this.get(path, callback)
+    }
 }
 
-const apiBlogNew = (data, callback) => {
-    const request = {
-        method: 'POST',
-        url: '/api/blog/add',
-        data: data,
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
+// const apiBindDelete = (data, callback) => {
+//     const request = {
+//         method: 'POST',
+//         url: '/api/blog/delete',
+//         data: data,
+//         contentType: 'application/json',
+//         callback: callback,
+//     }
+//     ajax(request)
+// }
+//
+// const apiBlogNew = (data, callback) => {
+//     const request = {
+//         method: 'POST',
+//         url: '/api/blog/add',
+//         data: data,
+//         contentType: 'application/json',
+//         callback: callback,
+//     }
+//     ajax(request)
+// }
+//
+// const apiBlogAll = (callback) => {
+//     var request = {
+//         method: 'GET',
+//         url: '/api/blog/all',
+//         contentType: 'application/json',
+//         callback: callback,
+//     }
+//     ajax(request)
+// }
+//
+// const apiAddComment = (data, callback) => {
+//     const request = {
+//         method: 'POST',
+//         url: '/api/comment/add',
+//         contentType: 'application/json',
+//         data: data,
+//         callback: callback,
+//     }
+//     ajax(request)
+// }
+//
+// const apiCommentAll = (callback) => {
+//     var request = {
+//         method: 'GET',
+//         url: '/api/comment/all',
+//         contentType: 'application/json',
+//         callback: callback,
+//     }
+//     ajax(request)
+// }
 
-const apiBlogAll = (callback) => {
-    var request = {
-        method: 'GET',
-        url: '/api/blog/all',
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
-
-const apiAddComment = (data, callback) => {
-    const request = {
-        method: 'POST',
-        url: '/api/comment/add',
-        contentType: 'application/json',
-        data: data,
-        callback: callback,
-    }
-    ajax(request)
-}
-
-const apiCommentAll = (callback) => {
-    var request = {
-        method: 'GET',
-        url: '/api/comment/all',
-        contentType: 'application/json',
-        callback: callback,
-    }
-    ajax(request)
-}
+var api = new Api()
 
 const blogAll = () => {
-    apiBlogAll(function (response) {
+    api.blogAll(function (response) {
         console.log('响应', response)
         var blogs = JSON.parse(response)
         window.blogs = blogs
@@ -133,7 +181,7 @@ const blogAll = () => {
 }
 
 const commentAll = () => {
-    apiCommentAll(function (response) {
+    api.commentAll(function (response) {
         var comments = JSON.parse(response)
         log('comments', comments)
     })
@@ -146,7 +194,7 @@ const actionAdd = () => {
         content: e('#id-input-content').value,
     }
     var data = JSON.stringify(form)
-    apiBlogNew (data, function (response) {
+    api.blogNew (data, function (response) {
         // 不考虑错误情况（断网、服务器返回错误等等）
         var res = JSON.parse(response)
         var t = templateBlog(res)
@@ -161,7 +209,7 @@ const actionDelete = (self) => {
         id: blogCell.dataset.id,
     }
     var data = JSON.stringify(form)
-    apiBindDelete(data, function (response) {
+    api.bindDelete(data, function (response) {
         log('result', response)
     })
 }
@@ -177,7 +225,7 @@ const actionAddComment = (self) => {
         content: content,
     }
     var data = JSON.stringify(form)
-    apiAddComment(data, function(response) {
+    api.addComment(data, function(response) {
         var comment = JSON.parse(response)
         log('新评论', comment)
     })
